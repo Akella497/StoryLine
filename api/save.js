@@ -1,8 +1,8 @@
 // api/save.js
-// Сохраняет данные персонажа (JSON) в GitHub репозиторий
+// Сохраняет данные дела (JSON) в GitHub репозиторий
 
 const OWNER = process.env.GITHUB_REPO_OWNER || process.env.VERCEL_GIT_REPO_OWNER || 'Akella497';
-const REPO = process.env.GITHUB_REPO_NAME || process.env.VERCEL_GIT_REPO_SLUG || 'Charlist-AldrinVeil';
+const REPO = process.env.GITHUB_REPO_NAME || process.env.VERCEL_GIT_REPO_SLUG || 'StoryLine';
 const FILE_PATH = process.env.GITHUB_DATA_FILE || 'data.json';
 
 function normalizeLogin(login) {
