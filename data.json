@@ -1,2 +1,14 @@
 {
+  "objectives": [
+    { "id": "objectives_1", "html": "<p contenteditable=\"true\">Кто последним видел жертву живой?</p>" }
+  ],
+  "dossier": [
+    { "id": "dossier_1", "html": "<h3 contenteditable=\"true\">Имя Фамилия</h3><span class=\"role\" contenteditable=\"true\">Подозреваемый</span><p contenteditable=\"true\">Краткое описание причастности к делу.</p>" }
+  ],
+  "witnesses": [
+    { "id": "witnesses_1", "html": "<h4 contenteditable=\"true\">Показание у таверны</h4><div class=\"who\" contenteditable=\"true\">Трактирщик</div><p contenteditable=\"true\">Текст показания...</p>" }
+  ],
+  "evidence": [
+    { "id": "evidence_1", "html": "<h4 contenteditable=\"true\">Улика с места</h4><div class=\"evi-items\" contenteditable=\"true\">Описание улики</div>" }
+  ]
 }
