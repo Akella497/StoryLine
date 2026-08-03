@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Глаза Медива · Бюро дознания</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:            #060a0e;
+      --panel:         #0b1218;
+      --panel-light:   #0f1a22;
+      --panel-hover:   #13212b;
+      --muted:         #5f7d8c;
+      --accent:        #3fa7c4;
+      --accent-dark:   #256d84;
+      --accent-bright: #7fd4ec;
+      --text:          #d6e6ec;
+      --border:        rgba(63, 167, 196, 0.2);
+      --border-bright: rgba(63, 167, 196, 0.5);
+      --red:           #c94444;
+      --radius:        8px;
+      --shadow:        0 8px 32px rgba(0,0,0,0.85);
+      --glow:          0 0 20px rgba(63,167,196,0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--bg); }
+
+    body {
+      font-family: 'Philosopher', Georgia, sans-serif;
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.7;
+      padding: 24px;
+      background-image:
+        radial-gradient(ellipse at 15% 20%, rgba(63,167,196,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 80%, rgba(63,167,196,0.05) 0%, transparent 50%);
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, #080d12 0%, #0c141b 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow), 0 0 60px rgba(63,167,196,0.06);
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #060a0e 0%, #0b131a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 36px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent-bright);
+      letter-spacing: 2px;
+      text-shadow: 0 0 30px rgba(63,167,196,0.5);
+    }
+
+    #auth-panel { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+
+    .auth-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: var(--radius);
+      border: 1px solid var(--border-bright);
+      background: rgba(63,167,196,0.1);
+      color: var(--accent-bright);
+      font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 1px;
+      cursor: pointer; transition: all 0.25s; text-decoration: none;
+    }
+    .auth-btn:hover { background: rgba(63,167,196,0.22); border-color: var(--accent); box-shadow: var(--glow); }
+    .auth-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+    .user-badge {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; border-radius: var(--radius);
+      background: rgba(63,167,196,0.08); border: 1px solid var(--border);
+    }
+    .user-badge img { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--accent); }
+    .user-badge span { font-family: 'Cinzel', serif; font-size: 0.8rem; color: var(--accent-bright); }
+
+    .edit-badge {
+      font-size: 0.75rem; padding: 3px 10px; border-radius: 20px;
+      background: rgba(63,167,196,0.2); border: 1px solid var(--accent);
+      color: var(--accent-bright); font-family: 'Cinzel', serif; letter-spacing: 1px;
+    }
+
+    #save-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      padding: 12px 20px; background: var(--panel-light);
+      border: 1px solid var(--accent); border-radius: var(--radius);
+      color: var(--accent-bright); font-family: 'Cinzel', serif; font-size: 0.85rem;
+      box-shadow: var(--glow); opacity: 0; transform: translateY(10px);
+      transition: all 0.3s; pointer-events: none; z-index: 100;
+    }
+    #save-toast.show { opacity: 1; transform: translateY(0); }
+
+    main { padding: 28px 36px; display: flex; flex-direction: column; gap: 28px; }
+
+    section.block h2 {
+      font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700;
+      color: var(--accent); margin-bottom: 16px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border); letter-spacing: 2px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .add-btn {
+      background: var(--accent-dark); color: #fff; border: none;
+      width: 26px; height: 26px; border-radius: 50%; font-size: 1.1rem; font-weight: bold;
+      cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(37,109,132,0.4);
+    }
+    .add-btn:hover { background: var(--accent); transform: rotate(90deg) scale(1.1); }
+
+    .delete-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: var(--red); color: #fff; border: none;
+      width: 22px; height: 22px; border-radius: 50%; font-size: 0.85rem;
+      cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+    }
+    .obj-card:hover .delete-btn,
+    .dcard:hover .delete-btn,
+    .witem:hover .delete-btn,
+    .evi-card:hover .delete-btn { opacity: 1; }
+    .delete-btn:hover { background: #e05555; transform: scale(1.15); }
+
+    body:not(.is-owner) .add-btn,
+    body:not(.is-owner) .delete-btn { display: none !important; }
+    body:not(.is-owner) [contenteditable] { pointer-events: none; }
+
+    .empty-hint { text-align: center; padding: 24px; color: var(--muted); font-style: italic; font-size: 0.9rem; }
+
+    .obj-grid, .dossier-grid, .evi-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;
+    }
+
+    .obj-card, .dcard, .witem, .evi-card {
+      position: relative; background: var(--panel-light); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-dark); border-radius: var(--radius);
+      padding: 16px; transition: all 0.25s;
+    }
+    .obj-card:hover, .dcard:hover, .witem:hover, .evi-card:hover {
+      background: var(--panel-hover); border-color: var(--accent); border-left-color: var(--accent); box-shadow: var(--glow);
+    }
+
+    .dcard h3, .witem h4, .evi-card h4 {
+      font-family: 'Cinzel', serif; font-size: 1rem; color: var(--accent-bright); margin-bottom: 6px;
+    }
+    .dcard .role {
+      display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 3px;
+      background: rgba(63,167,196,0.12); border: 1px solid var(--accent-dark); color: var(--accent);
+      font-family: 'Cinzel', serif; letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .obj-card p, .dcard p, .witem p, .evi-items { color: var(--muted); font-size: 1rem; }
+    .witem .who { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--accent); margin-bottom: 6px; }
+
+    .witness-list { display: flex; flex-direction: column; gap: 12px; }
+
+    [contenteditable="true"]:focus { outline: 1px dashed var(--border-bright); border-radius: 4px; }
+
+    footer {
+      padding: 18px 36px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; background: var(--panel);
+      color: var(--muted); font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<div id="save-toast">✦ Сохранено в репозиторий</div>
+
+<div class="page">
+  <header>
+    <div class="brand">Глаза Медива · Бюро дознания</div>
+
+    <div id="auth-panel">
+      <a id="login-btn" class="auth-btn" href="/api/auth/login">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        Войти через GitHub
+      </a>
+      <div id="user-info" style="display:none">
+        <div class="user-badge">
+          <img id="user-avatar" src="" alt="">
+          <span id="user-name"></span>
+        </div>
+      </div>
+      <div id="owner-badge" style="display:none">
+        <span class="edit-badge">✦ РЕЖИМ РЕДАКТИРОВАНИЯ</span>
+      </div>
+      <a id="logout-btn" href="/api/auth/logout" style="display:none;font-size:0.75rem;color:var(--muted);text-decoration:none;text-align:right">Выйти</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="block">
+      <h2>Вопросы дознания <button class="add-btn" onclick="addCard('objectives')">+</button></h2>
+      <div id="objectives" class="obj-grid"></div>
+    </section>
+
+    <section class="block">
+      <h2>Досье по делу <button class="add-btn" onclick="addCard('dossier')">+</button></h2>
+      <div id="dossier" class="dossier-grid"></div>
+    </section>
+
+    <section class="block">
+      <h2>Очевидцы происшествия <button class="add-btn" onclick="addCard('witnesses')">+</button></h2>
+      <div id="witnesses" class="witness-list"></div>
+    </section>
+
+    <section class="block">
+      <h2>Улики с места преступления <button class="add-btn" onclick="addCard('evidence')">+</button></h2>
+      <div id="evidence" class="evi-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>(с) by Akella497</div>
+  </footer>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  КОНФИГ СЕКЦИЙ
+// ═══════════════════════════════════════════════
+const SECTIONS = {
+  objectives: { container: 'objectives', cardClass: 'obj-card' },
+  dossier:    { container: 'dossier',    cardClass: 'dcard' },
+  witnesses:  { container: 'witnesses',  cardClass: 'witem' },
+  evidence:   { container: 'evidence',   cardClass: 'evi-card' },
+};
+
+const TEMPLATES = {
+  objectives: () => `<p contenteditable="true">Новый вопрос дознания...</p>`,
+  dossier:    () => `<h3 contenteditable="true">Имя</h3><span class="role" contenteditable="true">Роль</span><p contenteditable="true">Описание...</p>`,
+  witnesses:  () => `<h4 contenteditable="true">Заголовок показания</h4><div class="who" contenteditable="true">Кто свидетельствует</div><p contenteditable="true">Текст показания...</p>`,
+  evidence:   () => `<h4 contenteditable="true">Название улики</h4><div class="evi-items" contenteditable="true">Пункт улики</div>`,
+};
+
+// ═══════════════════════════════════════════════
+//  АВТОРИЗАЦИЯ
+// ═══════════════════════════════════════════════
+let canEdit = false;
+
+async function initAuth() {
+  try {
+    const res = await fetch('/api/auth/user');
+    if (!res.ok) return;
+    const user = await res.json();
+    if (!user || !user.login) return;
+
+    canEdit = Boolean(user.can_edit);
+
+    document.getElementById('login-btn').style.display = 'none';
+    document.getElementById('user-info').style.display = 'block';
+    document.getElementById('user-avatar').src = user.avatar_url;
+    document.getElementById('user-name').textContent = user.login;
+    document.getElementById('logout-btn').style.display = 'block';
+
+    if (canEdit) {
+      document.body.classList.add('is-owner');
+      document.getElementById('owner-badge').style.display = 'block';
+    }
+  } catch (e) {
+    // Не авторизован — ничего не делаем
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  РЕДАКТИРУЕМЫЕ ПОЛЯ
+// ═══════════════════════════════════════════════
+function bindEditableListeners(root) {
+  root.querySelectorAll('[contenteditable]').forEach(e => {
+    e.addEventListener('input', saveAndCommit);
+    e.addEventListener('blur', saveAndCommit);
+  });
+}
+
+function checkPlaceholder(key) {
+  const cfg = SECTIONS[key];
+  const container = document.getElementById(cfg.container);
+  const cards = container.querySelectorAll(`.${cfg.cardClass}`);
+  let ph = container.querySelector('.empty-hint');
+  if (cards.length === 0 && !ph) {
+    ph = document.createElement('p');
+    ph.className = 'empty-hint';
+    ph.textContent = 'Пока пусто...';
+    container.appendChild(ph);
+  } else if (cards.length > 0 && ph) {
+    ph.remove();
+  }
+}
+
+function addCard(key) {
+  if (!canEdit) return;
+  const cfg = SECTIONS[key];
+  const container = document.getElementById(cfg.container);
+  const div = document.createElement('div');
+  div.className = cfg.cardClass;
+  div.dataset.id = key + '_' + Date.now();
+  div.innerHTML = `<button class="delete-btn" onclick="deleteCard(this,'${key}')">×</button>` + TEMPLATES[key]();
+  container.appendChild(div);
+  bindEditableListeners(div);
+  checkPlaceholder(key);
+  saveAndCommit();
+}
+
+function deleteCard(btn, key) {
+  if (!canEdit) return;
+  if (confirm('Удалить элемент?')) {
+    btn.parentElement.remove();
+    checkPlaceholder(key);
+    saveAndCommit();
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  СБОР / ПРИМЕНЕНИЕ ДАННЫХ
+// ═══════════════════════════════════════════════
+function collectData() {
+  const data = {};
+  for (const key of Object.keys(SECTIONS)) {
+    const cfg = SECTIONS[key];
+    data[key] = [];
+    document.querySelectorAll(`#${cfg.container} .${cfg.cardClass}`).forEach(el => {
+      const clone = el.cloneNode(true);
+      const delBtn = clone.querySelector('.delete-btn');
+      if (delBtn) delBtn.remove();
+      data[key].push({ id: el.dataset.id, html: clone.innerHTML });
+    });
+  }
+  return data;
+}
+
+function applyData(data) {
+  if (!data) return;
+  for (const key of Object.keys(SECTIONS)) {
+    const cfg = SECTIONS[key];
+    const container = document.getElementById(cfg.container);
+    if (!container || !data[key]) continue;
+
+    container.querySelectorAll(`.${cfg.cardClass}`).forEach(el => el.remove());
+    const ph = container.querySelector('.empty-hint');
+    if (ph) ph.remove();
+
+    data[key].forEach(item => {
+      const div = document.createElement('div');
+      div.className = cfg.cardClass;
+      div.dataset.id = item.id;
+      div.innerHTML = `<button class="delete-btn" onclick="deleteCard(this,'${key}')">×</button>` + item.html;
+      container.appendChild(div);
+      bindEditableListeners(div);
+    });
+
+    checkPlaceholder(key);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  СОХРАНЕНИЕ В GITHUB
+// ═══════════════════════════════════════════════
+let saveTimer = null;
+let saveInFlight = false;
+let saveQueued = false;
+
+async function commitData({ showSavedToast = true, keepalive = false } = {}) {
+  if (!canEdit) return;
+  if (saveInFlight) { saveQueued = true; return; }
+
+  saveInFlight = true;
+  try {
+    const data = collectData();
+    const res = await fetch('/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data }),
+      keepalive
+    });
+
+    if (res.ok) {
+      if (showSavedToast) showToast();
+    } else {
+      console.error('Ошибка сохранения:', await res.text());
+    }
+  } catch (e) {
+    console.error('Ошибка сохранения:', e);
+  } finally {
+    saveInFlight = false;
+    if (saveQueued) {
+      saveQueued = false;
+      commitData({ showSavedToast: false });
+    }
+  }
+}
+
+function saveAndCommit() {
+  if (!canEdit) return;
+  saveQueued = true;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    saveQueued = false;
+    commitData({ showSavedToast: true });
+  }, 500);
+}
+
+function showToast() {
+  const t = document.getElementById('save-toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════
+//  ИНИЦИАЛИЗАЦИЯ
+// ═══════════════════════════════════════════════
+window.addEventListener('load', async () => {
+  initAuth();
+
+  for (const key of Object.keys(SECTIONS)) checkPlaceholder(key);
+
+  try {
+    const res = await fetch('/api/load');
+    if (res.ok) {
+      const { data } = await res.json();
+      if (data) applyData(data);
+    }
+  } catch (e) {
+    console.warn('Не удалось загрузить данные:', e);
+  }
+
+  bindEditableListeners(document);
+
+  window.addEventListener('pagehide', () => {
+    if (!canEdit) return;
+    clearTimeout(saveTimer);
+    saveQueued = false;
+    commitData({ showSavedToast: false, keepalive: true });
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'hidden' || !canEdit) return;
+    clearTimeout(saveTimer);
+    saveQueued = false;
+    commitData({ showSavedToast: false, keepalive: true });
+  });
+});
+</script>
+</body>
+</html>
