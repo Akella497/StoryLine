@@ -1,8 +1,8 @@
 // api/load.js
-// Отдаёт сохранённые данные персонажа из GitHub репозитория
+// Отдаёт сохранённые данные дела из GitHub репозитория
 
 const OWNER = process.env.GITHUB_REPO_OWNER || process.env.VERCEL_GIT_REPO_OWNER || 'Akella497';
-const REPO = process.env.GITHUB_REPO_NAME || process.env.VERCEL_GIT_REPO_SLUG || 'Charlist-AldrinVeil';
+const REPO = process.env.GITHUB_REPO_NAME || process.env.VERCEL_GIT_REPO_SLUG || 'StoryLine';
 const FILE_PATH = process.env.GITHUB_DATA_FILE || 'data.json';
 
 export default async function handler(req, res) {
